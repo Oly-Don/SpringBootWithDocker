@@ -22,7 +22,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <docker.image.prefix>olyDocker</docker.image.prefix>
+        <docker.image.prefix>oly-docker</docker.image.prefix>
         <java.version>1.8</java.version>
         <testng.version>6.11</testng.version>
     </properties>
@@ -61,7 +61,7 @@
                 <version>0.4.13</version>
                 <configuration>
                     <!-- ${project.artifactId}：即artifactId，myservice1-docker ${project.version}:即version，1.0-SNAPSHOT -->
-                    <imageName>${docker.image.prefix}:${project.artifactId}</imageName><!-- 镜像名称 -->
+                    <imageName>${docker.image.prefix}:${project.version}</imageName><!-- 镜像名称 -->
                     <dockerDirectory>${basedir}/src/main/docker</dockerDirectory><!-- Dockerfile文件地址 -->
                     <resources>
                         <resource>
