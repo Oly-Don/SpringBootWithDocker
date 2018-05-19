@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>FristSpringBoot</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Docker project for Spring Boot</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -25,6 +25,7 @@
         <docker.image.prefix>oly-docker</docker.image.prefix>
         <java.version>1.8</java.version>
         <testng.version>6.11</testng.version>
+        <selenium.version>2.53.0</selenium.version>
     </properties>
 
     <dependencies>
@@ -41,13 +42,88 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+        <!--selenium-->
+        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java-->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-server -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+            <version>2.50.0</version>
+        </dependency>
+        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver-->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-firefox-driver</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-chrome-driver-->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-chrome-driver</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-support-->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-support</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
         <!--TESTNG-->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
         </dependency>
+        <!--mock自定义测试模块-->
+        <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>3.6.0</version>
+            <!--<scope>test</scope>-->
+        </dependency>
+        <!--单元测试mockito-->
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <!--<scope>test</scope>-->
+        </dependency>
+        <!--接口测试自动化-->
+        <!-- https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>3.0.5</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-core -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.32</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.codeborne/selenide -->
+        <dependency>
+            <groupId>com.codeborne</groupId>
+            <artifactId>selenide</artifactId>
+            <version>3.5</version>
+        </dependency>
     </dependencies>
+
+
     <build>
         <plugins>
             <plugin>
@@ -60,8 +136,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.13</version>
                 <configuration>
-                    <!-- ${project.artifactId}：即artifactId，myservice1-docker ${project.version}:即version，1.0-SNAPSHOT -->
-                    <imageName>${docker.image.prefix}:${project.version}</imageName><!-- 镜像名称 -->
+                    <imageName>${docker.image.prefix}:${project.name}</imageName><!-- 镜像名称 -->
                     <dockerDirectory>${basedir}/src/main/docker</dockerDirectory><!-- Dockerfile文件地址 -->
                     <resources>
                         <resource>
