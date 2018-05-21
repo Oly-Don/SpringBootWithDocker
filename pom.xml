@@ -23,7 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <docker.image.prefix>dev</docker.image.prefix>
         <docker.registry>192.168.0.183:5000</docker.registry>
-        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <maven.build.timestamp.format>yyyyMMddHH</maven.build.timestamp.format>
         <java.version>1.8</java.version>
         <testng.version>6.11</testng.version>
         <selenium.version>2.53.0</selenium.version>
