@@ -27,6 +27,7 @@
         <java.version>1.8</java.version>
         <testng.version>6.11</testng.version>
         <selenium.version>2.53.0</selenium.version>
+        <selenide.version>3.5</selenide.version>
     </properties>
 
     <profiles>
@@ -69,7 +70,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.13</version>
                 <configuration>
-                    <imageName>${project.name}${maven.build.timestamp}${docker.image.prefix}</imageName><!-- 镜像名称 -->
+                    <imageName>${project.name}${docker.image.prefix}-${maven.build.timestamp}</imageName><!-- 镜像名称 -->
                     <dockerDirectory>${basedir}/src/main/docker</dockerDirectory><!-- Dockerfile文件地址 -->
                     <resources>
                         <resource>
@@ -100,8 +101,9 @@
                         </goals>
                         <!-- tag打标签的规范：私仓的url：port/项目名+时间戳+环境变量@Todo  -->
                         <configuration>
-                            <image>${project.name}${maven.build.timestamp}${docker.image.prefix}</image>
-                            <newName>${docker.registry}/${project.name}${maven.build.timestamp}${docker.image.prefix}</newName>
+                            <image>${project.name}${docker.image.prefix}-${maven.build.timestamp}</image>
+                            <newName>${docker.registry}/${project.name}${docker.image.prefix}-${maven.build.timestamp}
+                            </newName>
                             <forceTags>true</forceTags>
                         </configuration>
                     </execution>
@@ -112,7 +114,9 @@
                             <goal>push</goal>
                         </goals>
                         <configuration>
-                            <imageName>${docker.registry}/${project.name}${maven.build.timestamp}${docker.image.prefix}</imageName>
+                            <imageName>
+                                ${docker.registry}/${project.name}${docker.image.prefix}-${maven.build.timestamp}
+                            </imageName>
                         </configuration>
                     </execution>
                 </executions>
@@ -211,7 +215,7 @@
         <dependency>
             <groupId>com.codeborne</groupId>
             <artifactId>selenide</artifactId>
-            <version>3.5</version>
+            <version>${selenide.version}</version>
         </dependency>
     </dependencies>
 
