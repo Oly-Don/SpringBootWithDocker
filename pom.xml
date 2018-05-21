@@ -8,7 +8,7 @@
     <artifactId>SpringBootWithDocker</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>fristspringboot</name> <!-- docker 插件规定镜像名用小写字母 -->
+    <name>fristspringboot</name> <!-- docker 插件规定镜Docker 镜像名称需匹配[a-z0-9-_.]-->
     <description>Docker Project For Spring Boot</description>
 
     <parent>
