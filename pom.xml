@@ -21,12 +21,41 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <docker.image.prefix>192.168.0.183:5000</docker.image.prefix>
+        <docker.image.prefix>dev</docker.image.prefix>
         <docker.registry>192.168.0.183:5000</docker.registry>
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <java.version>1.8</java.version>
         <testng.version>6.11</testng.version>
         <selenium.version>2.53.0</selenium.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <!-- 测试环境 -->
+                <env>devenv</env>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <!-- 正式环境 -->
+                <env>testenv</env>
+            </properties>
+        </profile>
+        <profile>
+            <id>pre</id>
+            <properties>
+                <!-- 正式环境 -->
+                <env>preenv</env>
+            </properties>
+        </profile>
+    </profiles>
+
 
     <build>
         <plugins>
@@ -40,7 +69,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.13</version>
                 <configuration>
-                    <imageName>${docker.image.prefix}/${project.name}</imageName><!-- 镜像名称 -->
+                    <imageName>${project.name}${maven.build.timestamp}${docker.image.prefix}</imageName><!-- 镜像名称 -->
                     <dockerDirectory>${basedir}/src/main/docker</dockerDirectory><!-- Dockerfile文件地址 -->
                     <resources>
                         <resource>
@@ -51,8 +80,8 @@
                             <include>${project.build.finalName}.jar</include>
                         </resource>
                     </resources>
-                    <serverId>localdockerregistry</serverId>
-                    <registryUrl>http://192.168.0.183/v2/</registryUrl>
+                    <!--<serverId>localdockerregistry</serverId>-->
+                    <!--<registryUrl>http://192.168.0.183/v2/</registryUrl>-->
                 </configuration>
                 <!--绑定docker命令道mvn命令的生命周期里去-->
                 <executions>
@@ -69,9 +98,10 @@
                         <goals>
                             <goal>tag</goal>
                         </goals>
+                        <!-- tag打标签的规范：私仓的url：port/项目名+时间戳+环境变量@Todo  -->
                         <configuration>
-                            <image>${docker.image.prefix}/${project.name}</image>
-                            <newName>${docker.image.prefix}/${project.name}tag</newName>
+                            <image>${project.name}${maven.build.timestamp}${docker.image.prefix}</image>
+                            <newName>${docker.registry}/${project.name}${maven.build.timestamp}${docker.image.prefix}</newName>
                             <forceTags>true</forceTags>
                         </configuration>
                     </execution>
