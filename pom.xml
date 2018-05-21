@@ -94,8 +94,8 @@
                             <include>${project.build.finalName}.jar</include>
                         </resource>
                     </resources>
-                    <serverId>localdockerregistry</serverId>
-                    <registryUrl>http://192.168.0.183/v2/</registryUrl>
+                  <!--  <serverId>localdockerregistry</serverId>  -->
+                <!--    <registryUrl>http://192.168.0.183/v2/</registryUrl>  -->
                 </configuration>
                 <!--绑定docker命令道mvn命令的生命周期里去-->
                 <executions>
