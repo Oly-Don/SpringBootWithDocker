@@ -21,7 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <docker.image.prefix>dev</docker.image.prefix>
+        <docker.version.env>${docker.version.env}</docker.version.env>
         <docker.registry>192.168.0.183:5000</docker.registry>
         <maven.build.timestamp.format>yyyyMMddHH</maven.build.timestamp.format>
         <java.version>1.8</java.version>
@@ -30,12 +30,18 @@
         <selenide.version>3.5</selenide.version>
     </properties>
 
+
+    <!-- 用法  mvn clean package docker:build  -DpushImage -P dev-->
     <profiles>
+        <!--
+        mvn -P dev/mvn -P test 先查找<profile>标签,采用对应id=dev、test下的docker.version.env值.
+        而docker.version.env被pom.xml中被引用了,实现不同环境替换这个标签的效果。
+        -->
         <profile>
             <id>dev</id>
             <properties>
-                <!-- 测试环境 -->
-                <env>devenv</env>
+                <!-- 开发环境 -->
+                <docker.version.env>devbranch</docker.version.env>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -44,15 +50,22 @@
         <profile>
             <id>test</id>
             <properties>
-                <!-- 正式环境 -->
-                <env>testenv</env>
+                <!-- 测试环境 -->
+                <docker.version.env>testbranch</docker.version.env>
             </properties>
         </profile>
         <profile>
             <id>pre</id>
             <properties>
+                <!-- 预生产环境 -->
+                <docker.version.env>prebranch</docker.version.env>
+            </properties>
+        </profile>
+        <profile>
+            <id>prd</id>
+            <properties>
                 <!-- 正式环境 -->
-                <env>preenv</env>
+                <docker.version.env>masterbranch</docker.version.env>
             </properties>
         </profile>
     </profiles>
@@ -70,7 +83,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.13</version>
                 <configuration>
-                    <imageName>${project.name}${docker.image.prefix}-${maven.build.timestamp}</imageName><!-- 镜像名称 -->
+                    <imageName>${project.name}-${docker.version.env}-${maven.build.timestamp}</imageName><!-- 镜像名称 -->
                     <dockerDirectory>${basedir}/src/main/docker</dockerDirectory><!-- Dockerfile文件地址 -->
                     <resources>
                         <resource>
@@ -101,8 +114,8 @@
                         </goals>
                         <!-- tag打标签的规范：私仓的url：port/项目名+时间戳+环境变量@Todo  -->
                         <configuration>
-                            <image>${project.name}${docker.image.prefix}-${maven.build.timestamp}</image>
-                            <newName>${docker.registry}/${project.name}${docker.image.prefix}-${maven.build.timestamp}
+                            <image>${project.name}-${docker.version.env}-${maven.build.timestamp}</image>
+                            <newName>${docker.registry}/${project.name}-${docker.version.env}-${maven.build.timestamp}
                             </newName>
                             <forceTags>true</forceTags>
                         </configuration>
@@ -115,7 +128,7 @@
                         </goals>
                         <configuration>
                             <imageName>
-                                ${docker.registry}/${project.name}${docker.image.prefix}-${maven.build.timestamp}
+                                ${docker.registry}/${project.name}-${docker.version.env}-${maven.build.timestamp}
                             </imageName>
                         </configuration>
                     </execution>
