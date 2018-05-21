@@ -112,7 +112,7 @@
                             <goal>push</goal>
                         </goals>
                         <configuration>
-                            <imageName>${docker.registry}/${project.name}push</imageName>
+                            <imageName>${docker.registry}/${project.name}${maven.build.timestamp}${docker.image.prefix}push</imageName>
                         </configuration>
                     </execution>
                 </executions>
