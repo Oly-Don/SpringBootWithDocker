@@ -21,9 +21,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <docker.version.env>${docker.version.env}</docker.version.env>
-        <docker.registry>192.168.0.183:5000</docker.registry>
-        <maven.build.timestamp.format>yyyyMMddHH</maven.build.timestamp.format>
+        <docker.registry>192.168.45.137:5000</docker.registry>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
         <java.version>1.8</java.version>
         <testng.version>6.11</testng.version>
         <selenium.version>2.53.0</selenium.version>
@@ -83,7 +82,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.13</version>
                 <configuration>
-                    <imageName>${project.name}-${docker.version.env}-${maven.build.timestamp}</imageName><!-- 镜像名称 -->
+                    <imageName>${project.name}/${maven.build.timestamp}</imageName><!-- 镜像名称 -->
                     <dockerDirectory>${basedir}/src/main/docker</dockerDirectory><!-- Dockerfile文件地址 -->
                     <resources>
                         <resource>
@@ -114,22 +113,19 @@
                         </goals>
                         <!-- tag打标签的规范：私仓的url：port/项目名+时间戳+环境变量@Todo  -->
                         <configuration>
-                            <image>${project.name}-${docker.version.env}-${maven.build.timestamp}</image>
-                            <newName>${docker.registry}/${project.name}-${docker.version.env}-${maven.build.timestamp}
-                            </newName>
+                            <image>${project.name}/${maven.build.timestamp}</image>
+                            <newName>${docker.registry}/${project.name}-${docker.version.env}-${maven.build.timestamp}</newName>
                             <forceTags>true</forceTags>
                         </configuration>
                     </execution>
                     <execution>
                         <id>push-image</id>
-                        <phase>deploy</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>push</goal>
                         </goals>
                         <configuration>
-                            <imageName>
-                                ${docker.registry}/${project.name}-${docker.version.env}-${maven.build.timestamp}
-                            </imageName>
+                            <imageName>${docker.registry}/${project.name}-${docker.version.env}-${maven.build.timestamp}</imageName>
                         </configuration>
                     </execution>
                 </executions>
