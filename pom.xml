@@ -21,8 +21,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <docker.registry>192.168.45.137:5000</docker.registry>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+
         <java.version>1.8</java.version>
         <testng.version>6.11</testng.version>
         <selenium.version>2.53.0</selenium.version>
@@ -30,17 +32,17 @@
     </properties>
 
 
-    <!-- 用法  mvn clean package docker:build  -DpushImage -P dev-->
+    <!-- 用法  mvn clean package -P dev  -->
     <profiles>
         <!--
-        mvn -P dev/mvn -P test 先查找<profile>标签,采用对应id=dev、test下的docker.version.env值.
-        而docker.version.env被pom.xml中被引用了,实现不同环境替换这个标签的效果。
+        mvn -P dev/mvn -P test 先查找<profile>标签,采用对应id=dev、test下的branch.env值.
+        而branch.env被pom.xml中被引用了,实现不同环境替换这个标签的效果。
         -->
         <profile>
             <id>dev</id>
             <properties>
                 <!-- 开发环境 -->
-                <docker.version.env>devbranch</docker.version.env>
+                <branch.env>devbranch</branch.env>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -50,21 +52,21 @@
             <id>test</id>
             <properties>
                 <!-- 测试环境 -->
-                <docker.version.env>testbranch</docker.version.env>
+                <branch.env>testbranch</branch.env>
             </properties>
         </profile>
         <profile>
             <id>pre</id>
             <properties>
                 <!-- 预生产环境 -->
-                <docker.version.env>prebranch</docker.version.env>
+                <branch.env>prebranch</branch.env>
             </properties>
         </profile>
         <profile>
             <id>prd</id>
             <properties>
                 <!-- 正式环境 -->
-                <docker.version.env>masterbranch</docker.version.env>
+                <branch.env>masterbranch</branch.env>
             </properties>
         </profile>
     </profiles>
@@ -76,14 +78,14 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!--docker 打包-->
+            <!--docker 打包插件-->
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.13</version>
                 <configuration>
-                    <imageName>${project.name}/${maven.build.timestamp}</imageName><!-- 镜像名称 -->
-                    <dockerDirectory>${basedir}/src/main/docker</dockerDirectory><!-- Dockerfile文件地址 -->
+                    <imageName>${project.name}:${maven.build.timestamp}</imageName><!-- 公司项目名称,时间戳 -->
+                    <dockerDirectory>${basedir}/src/main/resources</dockerDirectory><!-- Dockerfile文件地址 -->
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
@@ -96,7 +98,7 @@
                   <!--  <serverId>localdockerregistry</serverId>  -->
                 <!--    <registryUrl>http://192.168.0.183/v2/</registryUrl>  -->
                 </configuration>
-                <!--绑定docker命令道mvn命令的生命周期里去-->
+                <!--绑定docker命令到mvn命令的生命周期里去，执行mvn package会执行镜像构建，打标签，推送-->
                 <executions>
                     <execution>
                         <id>build-image</id>
@@ -111,10 +113,10 @@
                         <goals>
                             <goal>tag</goal>
                         </goals>
-                        <!-- tag打标签的规范：私仓的url：port/项目名+时间戳+环境变量@Todo  -->
+                        <!-- tag打标签的规范：私仓的url：port/项目名变-分支变量:时间戳  -->
                         <configuration>
-                            <image>${project.name}/${maven.build.timestamp}</image>
-                            <newName>${docker.registry}/${project.name}-${docker.version.env}-${maven.build.timestamp}</newName>
+                            <image>${project.name}:${maven.build.timestamp}</image>
+                            <newName>${docker.registry}/${project.name}-${branch.env}:${maven.build.timestamp}</newName>
                             <forceTags>true</forceTags>
                         </configuration>
                     </execution>
@@ -125,7 +127,8 @@
                             <goal>push</goal>
                         </goals>
                         <configuration>
-                            <imageName>${docker.registry}/${project.name}-${docker.version.env}-${maven.build.timestamp}</imageName>
+                            <imageName>${docker.registry}/${project.name}-${branch.env}:${maven.build.timestamp}</imageName>
+                            <!--<imageName>${docker.registry}/${project.name}-${branch.env}:latest</imageName>-->
                         </configuration>
                     </execution>
                 </executions>
@@ -147,85 +150,85 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-        <!--selenium-->
-        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java-->
+<!--        &lt;!&ndash;selenium&ndash;&gt;
+        &lt;!&ndash;https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java&ndash;&gt;
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>${selenium.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-server -->
+        &lt;!&ndash; https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-server &ndash;&gt;
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-server</artifactId>
             <version>2.50.0</version>
         </dependency>
-        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver-->
+        &lt;!&ndash;https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver&ndash;&gt;
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-firefox-driver</artifactId>
             <version>${selenium.version}</version>
         </dependency>
-        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-chrome-driver-->
+        &lt;!&ndash;https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-chrome-driver&ndash;&gt;
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-chrome-driver</artifactId>
             <version>${selenium.version}</version>
         </dependency>
-        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-support-->
+        &lt;!&ndash;https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-support&ndash;&gt;
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-support</artifactId>
             <version>${selenium.version}</version>
         </dependency>
-        <!--TESTNG-->
+        &lt;!&ndash;TESTNG&ndash;&gt;
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
         </dependency>
-        <!--mock自定义测试模块-->
-        <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver -->
+        &lt;!&ndash;mock自定义测试模块&ndash;&gt;
+        &lt;!&ndash; https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver &ndash;&gt;
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>
             <version>3.6.0</version>
-            <!--<scope>test</scope>-->
+            &lt;!&ndash;<scope>test</scope>&ndash;&gt;
         </dependency>
-        <!--单元测试mockito-->
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+        &lt;!&ndash;单元测试mockito&ndash;&gt;
+        &lt;!&ndash; https://mvnrepository.com/artifact/org.mockito/mockito-all &ndash;&gt;
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.10.19</version>
-            <!--<scope>test</scope>-->
+            &lt;!&ndash;<scope>test</scope>&ndash;&gt;
         </dependency>
-        <!--接口测试自动化-->
-        <!-- https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
+        &lt;!&ndash;接口测试自动化&ndash;&gt;
+        &lt;!&ndash; https://mvnrepository.com/artifact/io.rest-assured/rest-assured &ndash;&gt;
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <version>3.0.5</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-core -->
+        &lt;!&ndash; https://mvnrepository.com/artifact/org.hamcrest/hamcrest-core &ndash;&gt;
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
             <version>1.3</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        &lt;!&ndash; https://mvnrepository.com/artifact/com.alibaba/fastjson &ndash;&gt;
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.32</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.codeborne/selenide -->
+        &lt;!&ndash; https://mvnrepository.com/artifact/com.codeborne/selenide &ndash;&gt;
         <dependency>
             <groupId>com.codeborne</groupId>
             <artifactId>selenide</artifactId>
             <version>${selenide.version}</version>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
     <!-- Aliyun repository -->
