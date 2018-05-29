@@ -1,0 +1,12 @@
+projecetXXX:
+  build: .
+    context: ./
+      dockerfile: Dockerfile
+      args:
+          appName:SpringBootWithDocker
+  port:
+    - '8080:8080'
+  volume:
+    .:/tmp
+  command: ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/SpringBootWithDocker.jar"]
+  restart: always

@@ -23,6 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <docker.registry>192.168.45.137:5000</docker.registry>
+        <docker.remoteapi.dockerHost>http://192.168.45.137:2375</docker.remoteapi.dockerHost>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 
         <java.version>1.8</java.version>
@@ -84,8 +85,12 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.13</version>
                 <configuration>
-                    <imageName>${project.name}:${maven.build.timestamp}</imageName><!-- 公司项目名称,时间戳 -->
-                    <dockerDirectory>${basedir}/src/main/resources</dockerDirectory><!-- Dockerfile文件地址 -->
+                    <imageName>${project.name}-${branch.env}:${maven.build.timestamp}</imageName><!-- 公司项目名称,时间戳 -->
+                <!--    <imageTags>
+                        <imageTag>${maven.build.timestamp}</imageTag>
+                        <imageTag>latest1</imageTag>
+                    </imageTags>-->
+                    <dockerDirectory>${basedir}</dockerDirectory><!-- Dockerfile文件地址 -->
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
@@ -95,8 +100,7 @@
                             <include>${project.build.finalName}.jar</include>
                         </resource>
                     </resources>
-                  <!--  <serverId>localdockerregistry</serverId>  -->
-                <!--    <registryUrl>http://192.168.0.183/v2/</registryUrl>  -->
+                    <dockerHost>${docker.remoteapi.dockerHost}</dockerHost>
                 </configuration>
                 <!--绑定docker命令到mvn命令的生命周期里去，执行mvn package会执行镜像构建，打标签，推送-->
                 <executions>
@@ -115,7 +119,7 @@
                         </goals>
                         <!-- tag打标签的规范：私仓的url：port/项目名变-分支变量:时间戳  -->
                         <configuration>
-                            <image>${project.name}:${maven.build.timestamp}</image>
+                            <image>${project.name}-${branch.env}:${maven.build.timestamp}</image>
                             <newName>${docker.registry}/${project.name}-${branch.env}:${maven.build.timestamp}</newName>
                             <forceTags>true</forceTags>
                         </configuration>
@@ -128,7 +132,6 @@
                         </goals>
                         <configuration>
                             <imageName>${docker.registry}/${project.name}-${branch.env}:${maven.build.timestamp}</imageName>
-                            <!--<imageName>${docker.registry}/${project.name}-${branch.env}:latest</imageName>-->
                         </configuration>
                     </execution>
                 </executions>
