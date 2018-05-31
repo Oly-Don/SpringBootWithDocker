@@ -1,12 +1,18 @@
-projecetXXX:
-  build: .
-    context: ./
+version: '2'
+services:
+  xxxservicename:
+    build:
+      context: ./
       dockerfile: Dockerfile
-      args:
-          appName:SpringBootWithDocker
-  port:
-    - '8080:8080'
-  volume:
-    .:/tmp
-  command: ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/SpringBootWithDocker.jar"]
-  restart: always
+##      args:
+##        - appName:diy
+    image: xxximagesname:xxxlocaltag
+    container_name: xxxcontainname
+    ports:
+      - '8080:8080'
+##      - '8000:8000'
+##    volumes:
+##      - '.:/tmp'
+##  command: ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/SpringBootWithDocker.jar"]
+
+## docker-compose up --build
