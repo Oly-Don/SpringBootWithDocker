@@ -28,7 +28,7 @@ public class PCIMockController {
     }
 
     @PostMapping(value = "/saveticket", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TicketResponce saveTickets(@RequestParam(required = false) Ticket ticket) {
+    public TicketResponce saveTickets(@RequestBody(required = false) Ticket ticket) {
         return ipciMockService.save(ticket);
     }
 }

@@ -10,7 +10,7 @@ public class Ticket {
 
     // CREATE TABLE ticket (id integer, targetcity varchar(255),startcity varchar(255),    targetdate date,startdate date,classtype  varchar(255),    retuencode integer,retueninfo  varchar(255),retuenremark  varchar(255));
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(name = "targetcity")
     private String targetCity;
